@@ -29,6 +29,20 @@ Applications: id, jobId, userId, status, message, createdAt
 SavedJobs(bookmarks): userId, jobId
 Notifications: id, userId, message, read(boolean), link (optional URL), types: APPLICATION_STATUS, NEW_MATCH, NEW_APPLICATION, JOB_EXPIRING
 
+---
+
+Bookmarking
+
+✔ Fetch jobs server-side
+✔ Include bookmark state in same request, if userId
+✔ Pass initialBookmarked into client component
+✔ Use useOptimistic for toggling
+Also get user skills when getting jobs
+
+Maybe if not sign-in the the toggle button opens dialog to sign-in or is hidden.
+
+---
+
 Notifations:
 1️⃣ Application Status Updates (Most Important)
 When it triggers:
