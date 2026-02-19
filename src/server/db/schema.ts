@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { index, pgTableCreator } from "drizzle-orm/pg-core";
+import { index, pgEnum, pgTableCreator } from "drizzle-orm/pg-core";
 
 export const createTable = pgTableCreator((name) => name);
 
@@ -22,6 +22,12 @@ export const listings = createTable(
   (t) => [index("created_by_idx").on(t.createdById)],
 );
 
+export const roleEnum = pgEnum("role", [
+  "user",
+  "employer",
+  "admin",
+]).enumValues;
+
 export const users = createTable(
   "user",
   (d) => ({
@@ -34,7 +40,7 @@ export const users = createTable(
     email: d.varchar({ length: 255 }).notNull().unique(),
     hashedPassword: d.varchar({ length: 255 }).notNull(),
     image: d.varchar({ length: 255 }),
-    role: d.text({ enum: ["user", "employer", "admin"] }),
+    role: d.text({ enum: roleEnum }).default("user"),
     emailVerified: d
       .timestamp({
         mode: "date",

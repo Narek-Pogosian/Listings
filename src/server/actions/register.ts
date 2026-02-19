@@ -7,7 +7,8 @@ import bcrypt from "bcrypt";
 
 export const registerAction = createAction(async ({ input, ctx }) => {
   const { data: parsedInput, success } = registerSchema.safeParse(input);
-  if (!success) {
+  // @ts-expect-error just making sure admin can't ever be and option
+  if (!success || parsedInput.role === "admin") {
     return { success: false, error: "Invalid input" };
   }
 
@@ -16,14 +17,15 @@ export const registerAction = createAction(async ({ input, ctx }) => {
   const user = await ctx.db
     .insert(users)
     .values({
-      email: parsedInput.email,
-      name: parsedInput.name,
       hashedPassword,
+      email: parsedInput.email,
+      name:
+        parsedInput.role === "user" ? parsedInput.name : parsedInput.company,
     })
     .returning();
 
   if (!user) {
-    return { success: false, error: "Something went wrong" };
+    return { success: false, error: "Unexpted error" };
   }
 
   return {

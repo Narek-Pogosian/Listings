@@ -1,27 +1,38 @@
+import { roleEnum } from "@/server/db/schema";
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  email: z.string().trim().email(),
+  email: z.email().trim(),
   password: z
     .string()
     .trim()
     .min(6, { message: "Password needs to be atleast 6 characters long" }),
 });
 
-export const registerSchema = loginSchema
-  .extend({
-    name: z.string().trim().min(1, { message: "Name is required" }),
-    confirmPassword: z
-      .string()
-      .trim()
-      .min(6, { message: "Password needs to be atleast 6 characters long" }),
-  })
-  .refine(
-    (vals) => {
-      return vals.password === vals.confirmPassword;
-    },
-    { message: "Passwords don't match" },
-  );
+const baseSchema = loginSchema.extend({
+  confirmPassword: z
+    .string()
+    .trim()
+    .min(6, { message: "Password needs to be at least 6 characters long" }),
+  role: z.enum(roleEnum),
+});
+
+const userSchema = baseSchema.extend({
+  role: z.literal("user"),
+  name: z.string().trim().min(1, { message: "Name is required" }),
+});
+
+const employerSchema = baseSchema.extend({
+  role: z.literal("employer"),
+  company: z.string().trim().min(1, { message: "Company is required" }),
+});
+
+export const registerSchema = z
+  .discriminatedUnion("role", [userSchema, employerSchema])
+  .refine((vals) => vals.password === vals.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 export type LoginSchemaType = z.infer<typeof loginSchema>;
 export type RegisterSchemaType = z.infer<typeof registerSchema>;
