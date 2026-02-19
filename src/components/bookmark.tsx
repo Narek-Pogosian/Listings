@@ -3,20 +3,23 @@
 import { useOptimistic, useTransition } from "react";
 import { toggleBookmark } from "@/server/actions/bookmark";
 
-export function BookmarkButton({ jobId, initialBookmarked, userId }) {
+interface Props {
+  initialBookmarked: boolean;
+}
+
+export function BookmarkButton({ initialBookmarked }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const [optimisticBookmarked, setOptimisticBookmarked] =
     useOptimistic(initialBookmarked);
 
-  function handleClick() {
-    setOptimisticBookmarked(!optimisticBookmarked);
+  console.log("mark", optimisticBookmarked);
 
+  function handleClick() {
     startTransition(async () => {
-      try {
-        await toggleBookmark(userId, jobId);
-      } catch {
-        // rollback if error
+      setOptimisticBookmarked(!optimisticBookmarked);
+      const { success } = await toggleBookmark("ef");
+      if (!success) {
         setOptimisticBookmarked(initialBookmarked);
       }
     });
