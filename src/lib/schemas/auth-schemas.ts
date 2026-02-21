@@ -18,12 +18,12 @@ const baseSchema = loginSchema.extend({
 });
 
 const userSchema = baseSchema.extend({
-  role: z.literal("user"),
+  role: z.literal("USER"),
   name: z.string().trim().min(1, { message: "Name is required" }),
 });
 
 const employerSchema = baseSchema.extend({
-  role: z.literal("employer"),
+  role: z.literal("EMPLOYER"),
   company: z.string().trim().min(1, { message: "Company is required" }),
 });
 

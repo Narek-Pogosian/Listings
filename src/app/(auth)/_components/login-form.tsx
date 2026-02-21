@@ -84,7 +84,7 @@ export default function LoginForm() {
 
       {error && <p className="text-danger-text font-semibold">{error}</p>}
 
-      <Button isLoading={isLoading} type="submit">
+      <Button isLoading={isLoading} aria-disabled={isLoading} type="submit">
         Login
       </Button>
     </form>

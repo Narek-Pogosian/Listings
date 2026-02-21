@@ -1,16 +1,7 @@
-Built a full-stack job platform using Next.js, Drizzle, PostgreSQL with:
-
-Role-based authentication
-Advanced filtering
-Skill-based match scoring
-Relational data modeling
-Application workflow system
-
 ## TODO
 
 ### Core features
 
-- Authentication, email password, role (Employee, Job seeker),
 - Employes can create, edit, delete, close jobs. (fields: title, description, location, remote/on-site, salary, skills(tags), experience-level)
 - Advanced search: Keyword search, skill tag, salaray range, remote filter, sorting options(newest, salary), mybe FTS for title search
 - Job-seeker page, bio, skills(tags), resume upload, experience level
@@ -18,16 +9,6 @@ Application workflow system
 - Match score, matchScore = matchedSkills / totalRequiredSkills \* 100
 - Saved jobs, bookmarks
 - Employer dashboard, see jobs, applications, update statuses
-
-DB:
-User: id, email, name, role, bio, experience,
-Jobs: id, title, description, location, remote, salary, employerId, createdAt
-Skills: id, name
-JobSkills: jobId, skillId
-UserSkills: userId, skillId
-Applications: id, jobId, userId, status, message, createdAt
-SavedJobs(bookmarks): userId, jobId
-Notifications: id, userId, message, read(boolean), link (optional URL), types: APPLICATION_STATUS, NEW_MATCH, NEW_APPLICATION, JOB_EXPIRING
 
 ---
 

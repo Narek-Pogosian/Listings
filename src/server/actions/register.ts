@@ -7,8 +7,8 @@ import bcrypt from "bcrypt";
 
 export const registerAction = createAction(async ({ input, ctx }) => {
   const { data: parsedInput, success } = registerSchema.safeParse(input);
-  // @ts-expect-error just making sure admin can't ever be and option
-  if (!success || parsedInput.role === "admin") {
+  // @ts-expect-error just making sure admin can't ever be an option
+  if (!success || parsedInput.role === "ADMIN") {
     return { success: false, error: "Invalid input" };
   }
 

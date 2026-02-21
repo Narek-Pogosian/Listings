@@ -33,7 +33,7 @@ export default function RegisterForm() {
       name: "",
       password: "",
       confirmPassword: "",
-      role: "user",
+      role: "USER",
     },
   });
 
@@ -74,19 +74,19 @@ export default function RegisterForm() {
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <Controller
         name="role"
-        defaultValue="user"
+        defaultValue="USER"
         control={form.control}
         render={({ field, fieldState }) => (
           <FieldSet>
             <FieldLegend variant="label">What brings you here</FieldLegend>
             <RadioGroup
-              defaultValue="user"
+              defaultValue="USER"
               className="w-fit"
               {...field}
               aria-invalid={fieldState.invalid}
             >
               <Field orientation="horizontal" className="flex items-center">
-                <RadioGroupItem value="user" id="desc-r1" />
+                <RadioGroupItem value="USER" id="desc-r1" />
                 <FieldContent>
                   <FieldLabel htmlFor="desc-r1">
                     I&apos;m looking for a job
@@ -94,7 +94,7 @@ export default function RegisterForm() {
                 </FieldContent>
               </Field>
               <Field orientation="horizontal">
-                <RadioGroupItem value="employer" id="desc-r2" />
+                <RadioGroupItem value="EMPLOYER" id="desc-r2" />
                 <FieldContent>
                   <FieldLabel htmlFor="desc-r2">I&apos;m hiring</FieldLabel>
                 </FieldContent>
@@ -104,7 +104,7 @@ export default function RegisterForm() {
         )}
       />
 
-      {role === "employer" ? (
+      {role === "EMPLOYER" ? (
         <Controller
           name="company"
           control={form.control}
@@ -203,7 +203,7 @@ export default function RegisterForm() {
 
       {error && <p className="text-danger-text font-semibold">{error}</p>}
 
-      <Button isLoading={isLoading} type="submit">
+      <Button isLoading={isLoading} aria-disabled={isLoading} type="submit">
         Register
       </Button>
     </form>
