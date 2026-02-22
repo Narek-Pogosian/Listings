@@ -24,7 +24,11 @@ export const remoteTypeEnum = pgEnum("remote_type", [
 export const listings = createTable(
   "listing",
   (d) => ({
-    id: d.uuid().defaultRandom().primaryKey(),
+    id: d
+      .varchar({ length: 255 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
     title: d.varchar({ length: 256 }).notNull(),
     description: d.text().notNull(),
     city: d.varchar({ length: 256 }).notNull(),
@@ -76,14 +80,14 @@ export const skills = createTable(
       .notNull(),
     updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
   }),
-  (t) => [index("name").on(t.name)],
+  (t) => [index("skills_name_idx").on(t.name)],
 );
 
 export const jobSkills = createTable(
   "job_skills",
   (d) => ({
     jobId: d
-      .integer()
+      .varchar({ length: 255 })
       .notNull()
       .references(() => listings.id, { onDelete: "cascade" }),
     skillId: d
@@ -93,8 +97,7 @@ export const jobSkills = createTable(
   }),
   (t) => [
     primaryKey({ columns: [t.jobId, t.skillId] }),
-    index("job_id_idx").on(t.jobId),
-    index("skill_id_idx").on(t.skillId),
+    index("jobSkills_jobId_idx").on(t.jobId),
   ],
 );
 
@@ -112,7 +115,7 @@ export const userSkills = createTable(
   }),
   (t) => [
     primaryKey({ columns: [t.userId, t.skillId] }),
-    index("user_id_idx").on(t.userId),
+    index("userSkills_userId_idx").on(t.userId),
   ],
 );
 
@@ -127,7 +130,7 @@ export const applications = createTable(
   "applications",
   (d) => ({
     jobId: d
-      .integer()
+      .varchar({ length: 255 })
       .notNull()
       .references(() => listings.id, { onDelete: "cascade" }),
     userId: d
@@ -147,9 +150,9 @@ export const applications = createTable(
   }),
   (t) => [
     primaryKey({ columns: [t.userId, t.jobId] }),
-    index("job_id_idx").on(t.jobId),
-    index("user_id_idx").on(t.userId),
-    index("status_idx").on(t.status),
+    index("application_jobId_idx").on(t.jobId),
+    index("application_userId_idx").on(t.userId),
+    index("application_status_idx").on(t.status),
   ],
 );
 
@@ -161,7 +164,7 @@ export const savedJobs = createTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     jobId: d
-      .integer()
+      .varchar({ length: 255 })
       .notNull()
       .references(() => listings.id, { onDelete: "cascade" }),
     createdAt: d
@@ -171,7 +174,7 @@ export const savedJobs = createTable(
   }),
   (t) => [
     primaryKey({ columns: [t.userId, t.jobId] }),
-    index("user_id_idx").on(t.userId),
+    index("savedJobs_userId_idx").on(t.userId),
   ],
 );
 
@@ -200,11 +203,12 @@ export const notifications = createTable(
       .notNull(),
   }),
   (t) => [
-    index("user_id_idx").on(t.userId),
+    index("notifications_userId_idx").on(t.userId),
     index("user_read_created_idx").on(t.userId, t.read, t.createdAt),
   ],
 );
 
+export type RoleEnumType = (typeof roleEnum)[number];
 export const roleEnum = pgEnum("role", [
   "USER",
   "EMPLOYER",
@@ -223,7 +227,7 @@ export const users = createTable(
     email: d.varchar({ length: 255 }).notNull().unique(),
     hashedPassword: d.varchar({ length: 255 }).notNull(),
     image: d.varchar({ length: 255 }),
-    role: d.text({ enum: roleEnum }).default("USER"),
+    role: d.text({ enum: roleEnum }).default("USER").notNull(),
     emailVerified: d
       .timestamp({
         mode: "date",
@@ -231,14 +235,13 @@ export const users = createTable(
       })
       .default(sql`CURRENT_TIMESTAMP`),
   }),
-  (t) => [index("email_idx").on(t.email)],
+  (t) => [index("users_email_idx").on(t.email)],
 );
 
 export const userInfo = createTable("userInfo", (d) => ({
   userId: d
     .varchar({ length: 255 })
     .notNull()
-    .unique()
     .primaryKey()
     .references(() => users.id, { onDelete: "cascade" }),
   bio: d.text(),

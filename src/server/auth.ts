@@ -4,19 +4,21 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type Adapter } from "next-auth/adapters";
 import { loginSchema } from "@/lib/schemas/auth-schemas";
 import { cache } from "react";
-import { users } from "./db/schema";
+import { type RoleEnumType, users } from "./db/schema";
 import { db } from "@/server/db";
 import { eq } from "drizzle-orm";
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
+  type User,
 } from "next-auth";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      role: RoleEnumType;
     } & DefaultSession["user"];
   }
 }
@@ -27,6 +29,7 @@ export const authOptions: NextAuthOptions = {
     jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.role = (user as User & { role: RoleEnumType }).role;
       }
       return token;
     },
@@ -34,7 +37,8 @@ export const authOptions: NextAuthOptions = {
       ...session,
       user: {
         ...session.user,
-        id: token.id,
+        id: token.id as string,
+        role: token.role as RoleEnumType,
       },
     }),
   },
@@ -74,6 +78,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           image: user.image,
+          role: user.role,
         };
       },
     }),
