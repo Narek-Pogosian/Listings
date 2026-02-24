@@ -38,7 +38,7 @@ export const listings = createTable(
     currency: d.varchar({ length: 3 }), // ISO code like USD, EUR
     experienceLevel: d.text({ enum: experienceLevelEnum }),
     status: d.text({ enum: listingStatusEnum }).default("DRAFT").notNull(),
-    // expiresAt: d.timestamp({ withTimezone: true }),
+    expiresAt: d.timestamp({ withTimezone: true }),
     employerId: d
       .varchar({ length: 255 })
       .notNull()
@@ -156,8 +156,8 @@ export const applications = createTable(
   ],
 );
 
-export const savedJobs = createTable(
-  "saved_jobs",
+export const bookmarks = createTable(
+  "bookmarks",
   (d) => ({
     userId: d
       .varchar({ length: 255 })
@@ -174,7 +174,7 @@ export const savedJobs = createTable(
   }),
   (t) => [
     primaryKey({ columns: [t.userId, t.jobId] }),
-    index("savedJobs_userId_idx").on(t.userId),
+    index("bookmarks_userId_idx").on(t.userId),
   ],
 );
 

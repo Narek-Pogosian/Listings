@@ -19,8 +19,9 @@ export const registerAction = createAction(async ({ input, ctx }) => {
     .values({
       hashedPassword,
       email: parsedInput.email,
+      role: parsedInput.role ?? "USER",
       name:
-        parsedInput.role === "user" ? parsedInput.name : parsedInput.company,
+        parsedInput.role === "USER" ? parsedInput.name : parsedInput.company,
     })
     .returning();
 

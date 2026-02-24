@@ -1,9 +1,7 @@
-"use client";
-
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   "inline-flex rounded items-center justify-center gap-2 transition-colors whitespace-nowrap cursor-pointer text-sm font-semibold disabled:pointer-events-none disabled:opacity-60 aria-disabled:opacity-60 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-ring focus-visible:ring-2",

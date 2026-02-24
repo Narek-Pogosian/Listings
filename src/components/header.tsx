@@ -1,6 +1,6 @@
 import { type RoleEnumType } from "@/server/db/schema";
 import { getServerAuthSession } from "@/server/auth";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Bell } from "lucide-react";
 import UserDropdown from "./user-dropdown";
 import ThemeToggle from "./theme-toggle";
@@ -10,11 +10,13 @@ export default async function Header() {
   const session = await getServerAuthSession();
 
   return (
-    <header className="sticky top-2 left-0 z-40 container mb-9">
-      <div className="bg-card container flex h-12 items-center justify-between rounded border shadow/5 dark:shadow-md/45">
+    <header className="header-container sticky top-2 left-0 z-40 mb-9">
+      <div className="bg-card header-container flex h-12 items-center justify-between rounded border shadow/5 dark:shadow-md/45">
         {/*LEFT SIDE  */}
-        <div>
-          {/* Maybe logo here */}
+        <div className="flex items-center gap-6">
+          <Link href="/" className="font-bold tracking-tight uppercase">
+            Listings
+          </Link>
           {session?.user && <Navigation role={session.user.role} />}
         </div>
 
@@ -30,13 +32,12 @@ export default async function Header() {
           ) : (
             <>
               <ThemeToggle />
-              <Button
-                role="link"
-                nativeButton={false}
-                render={<Link href="/login">Sign in</Link>}
-                variant="secondary"
-                size="sm"
-              />
+              <Link
+                href="/login"
+                className={buttonVariants({ size: "sm", variant: "secondary" })}
+              >
+                Sign in
+              </Link>
             </>
           )}
         </div>
@@ -47,11 +48,13 @@ export default async function Header() {
 
 function Navigation({ role }: { role: RoleEnumType }) {
   return (
-    <nav className="flex gap-4 text-sm font-semibold">
-      <Link href="/">Profile</Link>
-
+    <nav
+      aria-label="primary navigation"
+      className="flex gap-4 text-sm font-semibold"
+    >
       {role === "USER" && (
         <>
+          <Link href="/">Profile</Link>
           <Link href="/">Bookmarks</Link>
           <Link href="/">Applications</Link>
         </>
@@ -59,8 +62,7 @@ function Navigation({ role }: { role: RoleEnumType }) {
 
       {role === "EMPLOYER" && (
         <>
-          <Link href="/">Dashboard</Link>
-          <Link href="/">Post of job</Link>
+          <Link href="/dashboard">Dashboard</Link>
         </>
       )}
 
