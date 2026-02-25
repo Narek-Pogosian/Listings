@@ -20,10 +20,10 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useAction } from "next-safe-action/hooks";
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const form = useForm<RegisterSchemaType>({
     resolver: zodResolver(registerSchema),
@@ -37,35 +37,35 @@ export default function RegisterForm() {
     },
   });
 
+  const { executeAsync, result } = useAction(registerAction, {
+    onExecute: () => {
+      setIsLoading(true);
+    },
+    onSuccess: async ({ input }) => {
+      try {
+        const res = await signIn("credentials", {
+          email: input.email,
+          password: input.password,
+          redirect: false,
+        });
+
+        if (res?.ok) {
+          location.replace("/");
+        }
+      } catch (_) {
+        location.replace("/login");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onSettled: () => {
+      setIsLoading(false);
+    },
+  });
+
   async function onSubmit(data: RegisterSchemaType) {
     if (isLoading) return;
-    // @ts-expect-error just making sure it can't ever be admin
-    if (data.role === "admin") return;
-
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const {
-        success,
-        data: info,
-        error: registerError,
-      } = await registerAction(data);
-      if (!success) {
-        setError(registerError);
-      }
-
-      const res = await signIn("credentials", { ...info, redirect: false });
-      if (res?.ok) {
-        location.replace("/");
-      } else if (res?.error) {
-        setError("Something went wrong");
-      }
-    } catch (_) {
-      setError("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+    await executeAsync(data);
   }
 
   const role = form.watch("role");
@@ -201,7 +201,9 @@ export default function RegisterForm() {
         )}
       />
 
-      {error && <p className="text-danger-text font-semibold">{error}</p>}
+      {result.serverError && (
+        <p className="text-danger-text font-semibold">{result.serverError}</p>
+      )}
 
       <Button isLoading={isLoading} aria-disabled={isLoading} type="submit">
         Register
