@@ -2,8 +2,8 @@
 
 import { experienceLevelEnum, remoteTypeEnum } from "@/server/db/schema";
 import {
-  listingSchema,
-  type NewListingSchemaType,
+  createListingSchema,
+  type CreateListingSchemaType,
 } from "@/lib/schemas/listing-schema";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,8 +29,8 @@ export function NewListingForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const form = useForm<NewListingSchemaType>({
-    resolver: zodResolver(listingSchema),
+  const form = useForm<CreateListingSchemaType>({
+    resolver: zodResolver(createListingSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -42,10 +42,11 @@ export function NewListingForm() {
       experienceLevel: experienceLevelEnum[0],
       expiresAt: undefined,
       saveAsDraft: false,
+      skills: [],
     },
   });
 
-  async function onSubmit(data: NewListingSchemaType) {
+  async function onSubmit(data: CreateListingSchemaType) {
     if (isLoading) return;
     setIsLoading(true);
     setError("");

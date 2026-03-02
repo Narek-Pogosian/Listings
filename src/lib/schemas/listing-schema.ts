@@ -1,7 +1,7 @@
 import { experienceLevelEnum, remoteTypeEnum } from "@/server/db/schema";
 import z from "zod";
 
-export const listingSchema = z.object({
+export const createListingSchema = z.object({
   title: z.string(),
   description: z.string(),
   city: z.string(),
@@ -12,6 +12,7 @@ export const listingSchema = z.object({
   experienceLevel: z.enum(experienceLevelEnum),
   expiresAt: z.date().optional(),
   saveAsDraft: z.boolean(),
+  skills: z.array(z.string()),
 });
 
-export type NewListingSchemaType = z.infer<typeof listingSchema>;
+export type CreateListingSchemaType = z.infer<typeof createListingSchema>;

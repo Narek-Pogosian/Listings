@@ -1,6 +1,7 @@
 import { type RoleEnumType } from "@/server/db/schema";
 import { getServerAuthSession } from "@/server/auth";
 import { Button, buttonVariants } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
 import { Bell } from "lucide-react";
 import UserDropdown from "./user-dropdown";
 import ThemeToggle from "./theme-toggle";
@@ -31,15 +32,34 @@ export default async function Header() {
             </>
           ) : (
             <>
-              <ThemeToggle />
               <Link
                 href="/login"
                 className={buttonVariants({ size: "sm", variant: "secondary" })}
               >
                 Sign in
               </Link>
+              <ThemeToggle />
             </>
           )}
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export function HeaderFallback() {
+  return (
+    <header className="header-container sticky top-2 left-0 z-40 mb-9">
+      <div className="bg-card header-container flex h-12 items-center justify-between rounded border shadow/5 dark:shadow-md/45">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="font-bold tracking-tight uppercase">
+            Listings
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-20" />
+          <Skeleton className="size-8 rounded-full" />
         </div>
       </div>
     </header>
@@ -68,7 +88,7 @@ function Navigation({ role }: { role: RoleEnumType }) {
 
       {role === "ADMIN" && (
         <>
-          <Link href="/">Admin</Link>
+          <Link href="/admin">Admin</Link>
         </>
       )}
     </nav>

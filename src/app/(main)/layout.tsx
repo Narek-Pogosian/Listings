@@ -1,4 +1,5 @@
-import Header from "@/components/header";
+import Header, { HeaderFallback } from "@/components/header";
+import { Suspense } from "react";
 
 export default function AuthLayout({
   children,
@@ -7,7 +8,9 @@ export default function AuthLayout({
 }) {
   return (
     <>
-      <Header />
+      <Suspense fallback={<HeaderFallback />}>
+        <Header />
+      </Suspense>
       <main className="container pb-8">{children}</main>
     </>
   );

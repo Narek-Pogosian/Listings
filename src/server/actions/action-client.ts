@@ -1,5 +1,6 @@
 import { createSafeActionClient } from "next-safe-action";
 import { getServerAuthSession } from "../auth";
+import type { RoleEnumType } from "../db/schema";
 import { db } from "../db";
 
 export class ActionError extends Error {
@@ -24,24 +25,35 @@ export const actionClient = createSafeActionClient({
       return error.message;
     }
 
-    console.error(error);
     return "Unexpected error occurred.";
   },
   defaultValidationErrorsShape: "flattened",
 }).use(async ({ next }) => {
   return next({
-    ctx: {
-      db,
-    },
+    ctx: { db },
   });
 });
 
-export const protectedActionClient = actionClient.use(async ({ next, ctx }) => {
-  const session = await getServerAuthSession();
+const createRoleProtectedClient = (allowedRole: RoleEnumType) =>
+  actionClient.use(async ({ next, ctx }) => {
+    const session = await getServerAuthSession();
 
-  if (!session?.user?.id) {
-    throw new ActionError("You must be signed in to perform this action.");
-  }
+    if (!session?.user) {
+      throw new ActionError("You must be signed in to perform this action.");
+    }
 
-  return next({ ctx: { ...ctx, userId: session.user.id } });
-});
+    if (session.user.role !== allowedRole) {
+      throw new ActionError("Unauthorized");
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        userId: session.user.id,
+      },
+    });
+  });
+
+export const userActionClient = createRoleProtectedClient("USER");
+export const employerActionClient = createRoleProtectedClient("EMPLOYER");
+export const adminActionClient = createRoleProtectedClient("ADMIN");

@@ -8,6 +8,8 @@
 - [ ] Apply to job
 - [ ] Employer view applications, update statuses
 - [ ] Notifications
+- [ ] Admin, delete skills, also delete from jobSkills, userSkills
+- [ ] Allow employers to create skills if not available
 
 ---
 
@@ -40,5 +42,5 @@ When employer opens an application page.
 
 🏢 Notifications for Employers, Cronjobs
 
-1️⃣ New Application
-2️⃣ Job Expiring Soon
+- New Application
+- Job Expiring Soon
