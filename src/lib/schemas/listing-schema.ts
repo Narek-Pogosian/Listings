@@ -12,7 +12,7 @@ export const createListingSchema = z.object({
   experienceLevel: z.enum(experienceLevelEnum),
   expiresAt: z.date().optional(),
   saveAsDraft: z.boolean(),
-  skills: z.array(z.string()),
+  skills: z.array(z.object({ id: z.number(), name: z.string() })),
 });
 
 export type CreateListingSchemaType = z.infer<typeof createListingSchema>;

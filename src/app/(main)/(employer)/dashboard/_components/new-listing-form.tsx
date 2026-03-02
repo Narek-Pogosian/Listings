@@ -7,7 +7,6 @@ import {
 } from "@/lib/schemas/listing-schema";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,11 +22,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxChips,
+  ComboboxValue,
+  ComboboxChip,
+  ComboboxChipsInput,
+  ComboboxEmpty,
+  useComboboxAnchor,
+} from "@/components/ui/combobox";
 import { Textarea } from "@/components/ui/textarea";
+import { useAction } from "next-safe-action/hooks";
+import { createListingAction } from "@/server/actions/listing";
 
-export function NewListingForm() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+interface Props {
+  skills: {
+    id: number;
+    name: string;
+  }[];
+}
+
+export function NewListingForm({ skills }: Props) {
+  const anchor = useComboboxAnchor();
 
   const form = useForm<CreateListingSchemaType>({
     resolver: zodResolver(createListingSchema),
@@ -46,20 +65,16 @@ export function NewListingForm() {
     },
   });
 
-  async function onSubmit(data: CreateListingSchemaType) {
-    if (isLoading) return;
-    setIsLoading(true);
-    setError("");
+  const { executeAsync, isPending, result } = useAction(createListingAction, {
+    onSuccess: () => {
+      form.reset();
+    },
+  });
 
-    try {
-      // stub: replace with real action later
-      console.log("submit listing", data);
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+  async function onSubmit(data: CreateListingSchemaType) {
+    if (isPending) return;
+
+    executeAsync(data);
   }
 
   return (
@@ -275,6 +290,57 @@ export function NewListingForm() {
         )}
       />
 
+      {/* skills */}
+      <Controller
+        name="skills"
+        control={form.control}
+        render={({ field, fieldState }) => {
+          return (
+            <Field data-invalid={fieldState.invalid} className="space-y-1">
+              <FieldLabel>Required Skills</FieldLabel>
+              <FieldDescription>
+                Choose one or more skills that are relevant for this role
+              </FieldDescription>
+
+              <Combobox
+                multiple
+                autoHighlight
+                items={skills}
+                defaultValue={[]}
+                onValueChange={(val) => field.onChange(val)}
+              >
+                <ComboboxChips ref={anchor} className="w-full">
+                  <ComboboxValue>
+                    {(values) => (
+                      <>
+                        {values.map((value: any) => (
+                          <ComboboxChip key={value.id}>
+                            {value.name}
+                          </ComboboxChip>
+                        ))}
+                        <ComboboxChipsInput placeholder="Choose skills" />
+                      </>
+                    )}
+                  </ComboboxValue>
+                </ComboboxChips>
+                <ComboboxContent anchor={anchor}>
+                  <ComboboxEmpty>No items found.</ComboboxEmpty>
+                  <ComboboxList>
+                    {(item) => (
+                      <ComboboxItem key={item.id} value={item}>
+                        {item.name}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          );
+        }}
+      />
+
       {/* expires at */}
       <Controller
         name="expiresAt"
@@ -330,8 +396,11 @@ export function NewListingForm() {
         )}
       />
 
-      {error && <p className="text-danger-text font-semibold">{error}</p>}
-      <Button isLoading={isLoading} aria-disabled={isLoading} type="submit">
+      {result.serverError && (
+        <p className="text-danger-text font-semibold">{result.serverError}</p>
+      )}
+
+      <Button isLoading={isPending} type="submit">
         Create listing
       </Button>
     </form>

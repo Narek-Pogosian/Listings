@@ -6,5 +6,8 @@ export async function getAllSkills() {
   "use cache";
   cacheTag("skills");
 
-  return await db.select().from(skills).orderBy(skills.name);
+  return await db
+    .select({ id: skills.id, name: skills.name })
+    .from(skills)
+    .orderBy(skills.name);
 }

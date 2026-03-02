@@ -1,6 +1,7 @@
 import { getServerAuthSession } from "@/server/auth";
 import { NewListingForm } from "../_components/new-listing-form";
 import { redirect } from "next/navigation";
+import { getAllSkills } from "@/server/queries/skills";
 
 export default async function EmployerDashboardPage() {
   const session = await getServerAuthSession();
@@ -8,9 +9,11 @@ export default async function EmployerDashboardPage() {
     throw redirect("/");
   }
 
+  const skills = await getAllSkills();
+
   return (
     <>
-      <NewListingForm />
+      <NewListingForm skills={skills} />
     </>
   );
 }
