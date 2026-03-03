@@ -55,8 +55,8 @@ export function NewListingForm({ skills }: Props) {
       description: "",
       city: "",
       remote: remoteTypeEnum[0],
-      salaryMin: 0,
-      salaryMax: 0,
+      salaryMin: "" as unknown as number,
+      salaryMax: "" as unknown as number,
       currency: "",
       experienceLevel: experienceLevelEnum[0],
       expiresAt: undefined,
@@ -199,9 +199,17 @@ export function NewListingForm({ skills }: Props) {
                   type="number"
                   required
                   value={field.value}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  onChange={(e) => {
+                    const num = Number(e.target.value);
+                    if (num > 0) {
+                      field.onChange(num);
+                    } else {
+                      field.onChange("");
+                    }
+                  }}
                   aria-invalid={fieldState.invalid}
-                  placeholder="50000"
+                  placeholder="10000"
+                  min={0}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -221,9 +229,17 @@ export function NewListingForm({ skills }: Props) {
                   type="number"
                   required
                   value={field.value}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  onChange={(e) => {
+                    const num = Number(e.target.value);
+                    if (num > 0) {
+                      field.onChange(num);
+                    } else {
+                      field.onChange("");
+                    }
+                  }}
                   aria-invalid={fieldState.invalid}
-                  placeholder="120000"
+                  placeholder="20000"
+                  min={0}
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />

@@ -41,22 +41,23 @@ export default function RegisterForm() {
     onExecute: () => {
       setIsLoading(true);
     },
-    onSuccess: async ({ input }) => {
-      try {
-        const res = await signIn("credentials", {
-          email: input.email,
-          password: input.password,
-          redirect: false,
+    onSuccess: ({ input }) => {
+      signIn("credentials", {
+        email: input.email,
+        password: input.password,
+        redirect: false,
+      })
+        .then((res) => {
+          if (res?.ok) {
+            location.replace("/");
+          }
+        })
+        .catch(() => {
+          location.replace("/login");
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
-
-        if (res?.ok) {
-          location.replace("/");
-        }
-      } catch (_) {
-        location.replace("/login");
-      } finally {
-        setIsLoading(false);
-      }
     },
     onSettled: () => {
       setIsLoading(false);
@@ -187,7 +188,7 @@ export default function RegisterForm() {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="confirmPassword">Password</FieldLabel>
+            <FieldLabel htmlFor="confirmPassword">Confirm password</FieldLabel>
             <Input
               id="confirmPassword"
               type="password"

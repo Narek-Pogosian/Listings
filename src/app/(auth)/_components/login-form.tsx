@@ -27,19 +27,20 @@ export default function LoginForm() {
     setIsLoading(true);
     setError("");
 
-    try {
-      const res = await signIn("credentials", { ...data, redirect: false });
-      if (res?.ok) {
-        location.replace("/");
-      } else if (res?.error) {
-        setError("Invalid Credentials");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+    signIn("credentials", { ...data, redirect: false })
+      .then((res) => {
+        if (res?.ok) {
+          location.replace("/");
+        } else if (res?.error) {
+          setError("Invalid Credentials");
+        }
+      })
+      .catch(() => {
+        setError("Something went wrong");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
   return (

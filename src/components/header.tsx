@@ -11,14 +11,14 @@ export default async function Header() {
   const session = await getServerAuthSession();
 
   return (
-    <header className="header-container sticky top-2 left-0 z-40 mb-9">
+    <header className="header-container fixed top-2 left-0 z-40 mb-9 w-full">
       <div className="bg-card header-container flex h-12 items-center justify-between rounded border shadow/5 dark:shadow-md/45">
         {/*LEFT SIDE  */}
         <div className="flex items-center gap-6">
           <Link href="/" className="font-bold tracking-tight uppercase">
             Listings
           </Link>
-          {session?.user && <Navigation role={session.user.role} />}
+          {session && <Navigation role={session.user.role} />}
         </div>
 
         {/* RIGHT SIDE */}
@@ -49,7 +49,7 @@ export default async function Header() {
 
 export function HeaderFallback() {
   return (
-    <header className="header-container sticky top-2 left-0 z-40 mb-9">
+    <header className="header-container fixed top-2 left-0 z-40 mb-9 w-full">
       <div className="bg-card header-container flex h-12 items-center justify-between rounded border shadow/5 dark:shadow-md/45">
         <div className="flex items-center gap-6">
           <Link href="/" className="font-bold tracking-tight uppercase">

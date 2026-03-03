@@ -11,7 +11,7 @@ export default function AuthLayout({
       <Suspense fallback={<HeaderFallback />}>
         <Header />
       </Suspense>
-      <main className="container pb-8">{children}</main>
+      <main className="container pt-22 pb-8">{children}</main>
     </>
   );
 }

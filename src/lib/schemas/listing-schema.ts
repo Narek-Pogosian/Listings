@@ -8,7 +8,7 @@ export const createListingSchema = z.object({
   remote: z.enum(remoteTypeEnum),
   salaryMin: z.number(),
   salaryMax: z.number(),
-  currency: z.string(),
+  currency: z.string().min(0).max(3, { error: "ISO codes are 3 letters" }),
   experienceLevel: z.enum(experienceLevelEnum),
   expiresAt: z.date().optional(),
   saveAsDraft: z.boolean(),

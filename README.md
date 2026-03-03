@@ -1,11 +1,13 @@
 ## TODO
 
-- [ ] Employer dashboard, create listing, close listing
+- [ ] Eployer listing page with actions, more info
+- [ ] Employer - Listings filters (client side)
 - [ ] User profile, set skills, bio.
 - [ ] Listings page, filters and sorting, skill tag, salary range, location.
 - [ ] Match score = matchedSkills / totalRequiredSkills \* 100
 - [ ] Bookmarks with optimistic updats
 - [ ] Apply to job
+- [ ] Add pending applications to listing-card in employer page.
 - [ ] Employer view applications, update statuses
 - [ ] Notifications
 - [ ] Admin, delete skills, also delete from jobSkills, userSkills
