@@ -1,21 +1,28 @@
-import { getServerAuthSession } from "../auth";
-import { redirect } from "next/navigation";
 import { listings } from "../db/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 
-export async function getEmployerListings() {
-  const session = await getServerAuthSession();
-  if (!session || session.user.role !== "EMPLOYER") {
-    throw redirect("/");
-  }
+export async function getEmployerListings(employerId: string) {
+  await new Promise((res) => setTimeout(res, 200));
 
   return await db
     .select()
     .from(listings)
-    .where(eq(listings.employerId, session.user.id));
+    .where(eq(listings.employerId, employerId));
 }
 
 export type GetEmployerListingsType = Awaited<
   ReturnType<typeof getEmployerListings>
 >;
+
+export async function getListingById(id: string) {
+  const rows = await db
+    .select()
+    .from(listings)
+    .where(eq(listings.id, id))
+    .limit(1);
+
+  return rows[0] || null;
+}
+
+export type GetListingType = Awaited<ReturnType<typeof getListingById>>;

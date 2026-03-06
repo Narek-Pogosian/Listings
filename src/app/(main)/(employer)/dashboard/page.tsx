@@ -19,14 +19,14 @@ export default async function EmployerDashboardPage() {
       </Link>
 
       <Suspense fallback={<div>Loading listings...</div>}>
-        <Listings />
+        <Listings employerId={session.user.id} />
       </Suspense>
     </>
   );
 }
 
-async function Listings() {
-  const listings = await getEmployerListings();
+async function Listings({ employerId }: { employerId: string }) {
+  const listings = await getEmployerListings(employerId);
 
   if (listings.length === 0) {
     return (

@@ -37,6 +37,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useAction } from "next-safe-action/hooks";
 import { createListingAction } from "@/server/actions/listing";
+import { useRouter } from "next/navigation";
 
 interface Props {
   skills: {
@@ -47,6 +48,7 @@ interface Props {
 
 export function NewListingForm({ skills }: Props) {
   const anchor = useComboboxAnchor();
+  const router = useRouter();
 
   const form = useForm<CreateListingSchemaType>({
     resolver: zodResolver(createListingSchema),
@@ -65,11 +67,16 @@ export function NewListingForm({ skills }: Props) {
     },
   });
 
-  const { executeAsync, isPending, result } = useAction(createListingAction, {
-    onSuccess: () => {
-      form.reset();
+  const { executeAsync, isPending, result, reset } = useAction(
+    createListingAction,
+    {
+      onSuccess: () => {
+        form.reset();
+        reset();
+        router.push("/dashboard");
+      },
     },
-  });
+  );
 
   async function onSubmit(data: CreateListingSchemaType) {
     if (isPending) return;
