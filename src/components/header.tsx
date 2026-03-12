@@ -74,9 +74,7 @@ function Navigation({ role }: { role: RoleEnumType }) {
     >
       {role === "USER" && (
         <>
-          <Link href="/">Profile</Link>
-          <Link href="/">Bookmarks</Link>
-          <Link href="/">Applications</Link>
+          <Link href="/profile">Profile</Link>
         </>
       )}
 

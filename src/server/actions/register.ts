@@ -2,7 +2,7 @@
 
 import { registerSchema } from "@/lib/schemas/auth-schemas";
 import { actionClient, ActionError } from "./action-client";
-import { users } from "../db/schema";
+import { userInfo, users } from "../db/schema";
 import bcrypt from "bcrypt";
 
 export const registerAction = actionClient
@@ -16,21 +16,33 @@ export const registerAction = actionClient
     const hashedPassword = bcrypt.hashSync(parsedInput.password, 10);
 
     try {
-      const user = await ctx.db
-        .insert(users)
-        .values({
-          hashedPassword,
-          role: parsedInput.role,
-          email: parsedInput.email,
-          name:
-            parsedInput.role === "USER"
-              ? parsedInput.name
-              : parsedInput.company,
-        })
-        .returning();
+      const result = await ctx.db.transaction(async (tx) => {
+        const [user] = await tx
+          .insert(users)
+          .values({
+            hashedPassword,
+            role: parsedInput.role,
+            email: parsedInput.email,
+            name:
+              parsedInput.role === "USER"
+                ? parsedInput.name
+                : parsedInput.company,
+          })
+          .returning();
 
-      if (!user) {
-        throw new Error();
+        if (!user) {
+          throw new ActionError("Something went wrong, please try again.");
+        }
+
+        if (user.role === "USER") {
+          await tx.insert(userInfo).values({ userId: user.id });
+        }
+
+        return user;
+      });
+
+      if (!result) {
+        throw new ActionError("Something went wrong, please try again.");
       }
 
       return { email: parsedInput.email, password: parsedInput.password };

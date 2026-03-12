@@ -1,6 +1,7 @@
 ## TODO
 
-- [ ] User profile, set skills, bio.
+- [ ] Toast messages.
+- [ ] Rich text editor for description
 - [ ] Listings page, filters and sorting, skill tag, salary range, location.
 - [ ] Match score = matchedSkills / totalRequiredSkills \* 100
 - [ ] Bookmarks with optimistic updats
@@ -11,7 +12,6 @@
 - [ ] Admin, delete skills, also delete from jobSkills, userSkills
 - [ ] Allow employers to create skills if not available
 - [ ] Employer - Listings filters (client side)
-- [ ] Rich text editor for description
 
 ---
 

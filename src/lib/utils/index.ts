@@ -17,6 +17,13 @@ export function formatTimeAgo(date: Date): string {
   return date.toLocaleDateString();
 }
 
+export function formatDate(date: Date | null) {
+  if (!date) return "—";
+  return new Intl.DateTimeFormat("en", {
+    dateStyle: "medium",
+  }).format(date);
+}
+
 export function formatSalary(
   min: number | null,
   max: number | null,
