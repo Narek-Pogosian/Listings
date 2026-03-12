@@ -72,6 +72,7 @@ export function NewListingForm({ skills }: Props) {
     {
       onSuccess: () => {
         form.reset();
+        form.setValue("skills", []);
         reset();
         router.push("/dashboard");
       },

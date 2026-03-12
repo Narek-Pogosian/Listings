@@ -1,7 +1,5 @@
 ## TODO
 
-- [ ] Eployer listing page with actions, more info
-
 - [ ] User profile, set skills, bio.
 - [ ] Listings page, filters and sorting, skill tag, salary range, location.
 - [ ] Match score = matchedSkills / totalRequiredSkills \* 100
@@ -13,6 +11,7 @@
 - [ ] Admin, delete skills, also delete from jobSkills, userSkills
 - [ ] Allow employers to create skills if not available
 - [ ] Employer - Listings filters (client side)
+- [ ] Rich text editor for description
 
 ---
 

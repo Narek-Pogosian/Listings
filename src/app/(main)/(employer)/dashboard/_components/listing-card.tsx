@@ -1,8 +1,9 @@
 "use client";
 
 import { REMOTE_CONFIG, STATUS_CONFIG } from "@/config/constants";
-import { cn, formatTimeAgo } from "@/lib/utils";
 import { type GetEmployerListingsType } from "@/server/queries/listings";
+import { cn, formatTimeAgo } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 
 interface ListingCardProps {
@@ -10,19 +11,7 @@ interface ListingCardProps {
 }
 
 export function ListingCard({ listing }: ListingCardProps) {
-  const { updatedAt, expiresAt, status, title, remote, city } = listing;
-
-  const isExpiringSoon =
-    expiresAt &&
-    new Date(expiresAt).getTime() - new Date().getTime() <
-      7 * 24 * 60 * 60 * 1000;
-
-  const daysUntilExpiry = expiresAt
-    ? Math.ceil(
-        (new Date(expiresAt).getTime() - new Date().getTime()) /
-          (24 * 60 * 60 * 1000),
-      )
-    : null;
+  const { updatedAt, status, title, remote, city } = listing;
 
   const statusData = STATUS_CONFIG[status];
   const timeAgo = updatedAt ? formatTimeAgo(updatedAt) : null;
@@ -59,13 +48,11 @@ export function ListingCard({ listing }: ListingCardProps) {
             Updated {timeAgo}
           </span>
         )}
-        {isExpiringSoon && daysUntilExpiry !== null && (
-          <p className="mr-2 inline text-xs text-orange-700 dark:text-orange-300">
-            Expires in {daysUntilExpiry}{" "}
-            {daysUntilExpiry === 1 ? "day" : "days"}
-          </p>
-        )}
       </div>
     </div>
   );
+}
+
+export function ListingCardSkeleton() {
+  return <Skeleton className="h-31.5 rounded" />;
 }

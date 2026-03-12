@@ -16,3 +16,19 @@ export function formatTimeAgo(date: Date): string {
 
   return date.toLocaleDateString();
 }
+
+export function formatSalary(
+  min: number | null,
+  max: number | null,
+  currency: string | null,
+) {
+  if (!min && !max) return "Not specified";
+
+  const cur = currency ?? "";
+  if (min && max)
+    return `${min.toLocaleString()} - ${max.toLocaleString()} ${cur}`;
+  if (min) return `From ${min.toLocaleString()} ${cur}`;
+  if (max) return `Up to ${max.toLocaleString()} ${cur}`;
+
+  return "Not specified";
+}
