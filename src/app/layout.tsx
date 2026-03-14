@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Mona_Sans } from "next/font/google";
 import BackgroundSvg from "@/components/background-svg";
+import ToastProvider from "@/components/ui/toast";
 
 const sans = Mona_Sans({
   variable: "--font-mona-sans",
@@ -31,8 +32,10 @@ export default function RootLayout({
           defaultTheme="dark"
           disableTransitionOnChange
         >
-          <BackgroundSvg />
-          {children}
+          <ToastProvider>
+            <BackgroundSvg />
+            {children}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

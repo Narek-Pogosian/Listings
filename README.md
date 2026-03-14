@@ -1,7 +1,5 @@
 ## TODO
 
-- [ ] Toast messages.
-- [ ] Rich text editor for description
 - [ ] Listings page, filters and sorting, skill tag, salary range, location.
 - [ ] Match score = matchedSkills / totalRequiredSkills \* 100
 - [ ] Bookmarks with optimistic updats

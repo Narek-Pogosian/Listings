@@ -10,7 +10,6 @@ import {
 } from "@/server/actions/listing";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -19,6 +18,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Toast, type DialogRootActions } from "@base-ui/react";
+import { useRef } from "react";
 
 interface Props {
   listingId: GetListingType["id"];
@@ -40,22 +41,27 @@ export function ListingActions({ listingId, listingStatus }: Props) {
 
 function PublishDialog({ listingId }: { listingId: string }) {
   const router = useRouter();
+  const toastManager = Toast.useToastManager();
+  const dialogRef = useRef<DialogRootActions>(null);
+
   const { executeAsync: updateStatus, isPending: isUpdating } = useAction(
     updateListingStatusAction,
-    {
-      onSuccess: () => {
-        router.refresh();
-      },
-    },
   );
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (isUpdating) return;
-    updateStatus({ listingId, status: "PUBLISHED" });
+    try {
+      await updateStatus({ listingId, status: "PUBLISHED" });
+      toastManager.add({ title: "Listing has been published" });
+      router.refresh();
+      dialogRef.current?.close();
+    } catch {
+      toastManager.add({ title: "Failed to publish listing" });
+    }
   };
 
   return (
-    <AlertDialog>
+    <AlertDialog actionsRef={dialogRef}>
       <AlertDialogTrigger
         render={<Button variant="secondary">Publish</Button>}
       ></AlertDialogTrigger>
@@ -70,9 +76,9 @@ function PublishDialog({ listingId }: { listingId: string }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handlePublish} disabled={isUpdating}>
+          <Button onClick={handlePublish} disabled={isUpdating}>
             {isUpdating ? "Publishing..." : "Publish"}
-          </AlertDialogAction>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -81,22 +87,27 @@ function PublishDialog({ listingId }: { listingId: string }) {
 
 function CloseDialog({ listingId }: { listingId: string }) {
   const router = useRouter();
+  const toastManager = Toast.useToastManager();
+  const dialogRef = useRef<DialogRootActions>(null);
+
   const { executeAsync: updateStatus, isPending: isUpdating } = useAction(
     updateListingStatusAction,
-    {
-      onSuccess: () => {
-        router.refresh();
-      },
-    },
   );
 
-  const handleClose = () => {
+  const handleClose = async () => {
     if (isUpdating) return;
-    updateStatus({ listingId, status: "CLOSED" });
+    try {
+      await updateStatus({ listingId, status: "CLOSED" });
+      toastManager.add({ title: "Listing has been closed" });
+      router.refresh();
+      dialogRef.current?.close();
+    } catch {
+      toastManager.add({ title: "Failed to close listing" });
+    }
   };
 
   return (
-    <AlertDialog>
+    <AlertDialog actionsRef={dialogRef}>
       <AlertDialogTrigger
         render={<Button variant="secondary">Close listing</Button>}
       ></AlertDialogTrigger>
@@ -111,9 +122,9 @@ function CloseDialog({ listingId }: { listingId: string }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleClose} disabled={isUpdating}>
+          <Button onClick={handleClose} disabled={isUpdating}>
             {isUpdating ? "Closing..." : "Close"}
-          </AlertDialogAction>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -122,22 +133,26 @@ function CloseDialog({ listingId }: { listingId: string }) {
 
 function DeleteDialog({ listingId }: { listingId: string }) {
   const router = useRouter();
-  const { executeAsync: removeListing, isPending: isDeleting } = useAction(
-    deleteListingAction,
-    {
-      onSuccess: () => {
-        router.replace("/dashboard");
-      },
-    },
-  );
+  const toastManager = Toast.useToastManager();
+  const dialogRef = useRef<DialogRootActions>(null);
 
-  const handleDelete = () => {
+  const { executeAsync: removeListing, isPending: isDeleting } =
+    useAction(deleteListingAction);
+
+  const handleDelete = async () => {
     if (isDeleting) return;
-    removeListing({ listingId });
+    try {
+      await removeListing({ listingId });
+      toastManager.add({ title: "Listing has been deleted" });
+      router.replace("/dashboard");
+      dialogRef.current?.close();
+    } catch {
+      toastManager.add({ title: "Failed to delete listing" });
+    }
   };
 
   return (
-    <AlertDialog>
+    <AlertDialog actionsRef={dialogRef}>
       <AlertDialogTrigger
         render={<Button variant="danger">Delete </Button>}
       ></AlertDialogTrigger>
@@ -152,9 +167,9 @@ function DeleteDialog({ listingId }: { listingId: string }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
+          <Button variant="danger" onClick={handleDelete} disabled={isDeleting}>
             {isDeleting ? "Deleting..." : "Delete"}
-          </AlertDialogAction>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

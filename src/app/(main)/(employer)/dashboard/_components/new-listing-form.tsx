@@ -38,6 +38,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAction } from "next-safe-action/hooks";
 import { createListingAction } from "@/server/actions/listing";
 import { useRouter } from "next/navigation";
+import { Toast } from "@base-ui/react";
 
 interface Props {
   skills: {
@@ -49,6 +50,7 @@ interface Props {
 export function NewListingForm({ skills }: Props) {
   const anchor = useComboboxAnchor();
   const router = useRouter();
+  const toastManager = Toast.useToastManager();
 
   const form = useForm<CreateListingSchemaType>({
     resolver: zodResolver(createListingSchema),
@@ -74,6 +76,9 @@ export function NewListingForm({ skills }: Props) {
         form.reset();
         form.setValue("skills", []);
         reset();
+        toastManager.add({
+          title: "New listing created",
+        });
         router.push("/dashboard");
       },
     },

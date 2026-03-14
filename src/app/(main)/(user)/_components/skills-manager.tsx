@@ -19,6 +19,7 @@ import {
   ComboboxEmpty,
 } from "@/components/ui/combobox";
 import { Button } from "@/components/ui/button";
+import { Toast } from "@base-ui/react";
 
 interface Skill {
   id: number;
@@ -35,6 +36,8 @@ export default function SkillsManager({
   initialSkills,
 }: Props) {
   const anchor = useComboboxAnchor();
+  const toastManager = Toast.useToastManager();
+
   const [selected, setSelected] = useState<Skill[]>(initialSkills);
   const [comboValue, setComboValue] = useState<Skill[]>([]);
 
@@ -46,6 +49,7 @@ export default function SkillsManager({
           (id) => availableSkills.find((s) => s.id === id)!,
         );
 
+        toastManager.add({ title: "Skills updated" });
         setSelected((prev) => [...prev, ...addedSkills]);
       },
     },
@@ -54,8 +58,10 @@ export default function SkillsManager({
   const { executeAsync: removeSkill, isPending: removing } = useAction(
     deleteUserSkillAction,
     {
-      onSuccess: ({ input }) =>
-        setSelected((prev) => prev.filter((s) => s.id !== input.skillId)),
+      onSuccess: ({ input }) => {
+        toastManager.add({ title: "Skills updated" });
+        setSelected((prev) => prev.filter((s) => s.id !== input.skillId));
+      },
     },
   );
 
